@@ -43,3 +43,51 @@ void handle_client(int client_socket) {
 
     close(client_socket);
 }
+
+int main() {
+    int server_socket, client_socket;
+    struct sockaddr_in server_addr, client_addr;
+    socklen_t addr_size;
+
+    // Create socket
+    server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    if (server_socket < 0) {
+        perror("Socket creation failed");
+        return 1;
+    }
+    // Configure server address
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(PORT);
+    server_addr.sin_addr.s_addr = INADDR_ANY;
+
+    // Bind socket to the port
+    if (bind(server_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
+        perror("Bind failed");
+        return 1;
+    }
+
+    // Listen for connections
+    if (listen(server_socket, 10) < 0) {
+        perror("Listen failed");
+        return 1;
+    }
+
+    printf("SMTP server listening on port %d...\n", PORT);
+
+    // Accept and handle clients
+    while (1) {
+        addr_size = sizeof(client_addr);
+        client_socket = accept(server_socket, (struct sockaddr*)&client_addr, &addr_size);
+        if (client_socket < 0) {
+            perror("Accept failed");
+            continue;
+        }
+        printf("Client connected.\n");
+
+        // Handle client communication
+        handle_client(client_socket);
+    }
+
+    close(server_socket);
+    return 0;
+}
