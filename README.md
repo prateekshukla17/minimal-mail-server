@@ -110,5 +110,3 @@ Connection closed by foreign host.
 This project is open-source and available under the [MIT License](LICENSE).
 
 ---
-
-Feel free to contribute by submitting issues or pull requests!
